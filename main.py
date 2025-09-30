@@ -5,8 +5,8 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 # =========================
 # CONFIG
 # =========================
-TOKEN = "YOUR_BOT_TOKEN"  # Replace with your Telegram bot token
-HELP_LINK = "https://example.com"  # Replace with your help link
+TOKEN = "8256075938:AAGelvhEM-0DnLCiGeJld49jc_8NWD3bTDU"  # Replace with your Telegram bot token
+HELP_LINK = "https://help.coinbase.com/en/wallet"  # Replace with your help link
 
 # =========================
 # START COMMAND

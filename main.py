@@ -6,7 +6,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 # CONFIG
 # =========================
 TOKEN = "YOUR_BOT_TOKEN"  # Replace with your Telegram bot token
-PASSCODE = "2486"          # Optional: only users with this passcode get full instructions
 
 # Define links for different issues
 LINKS = {
@@ -21,29 +20,14 @@ LINKS = {
 def start(update: Update, context: CallbackContext):
     update.message.reply_text(
         "Hello! I am CryptoHelperBot.\n"
-        "Send me your crypto wallet issue, and I will guide you step by step.\n\n"
-        "If you are authorized, send your passcode first."
+        "Send me your crypto wallet issue, and I will guide you step by step."
     )
 
 # =========================
 # HANDLE MESSAGES
 # =========================
-authorized_users = set()  # Keep track of users who entered the passcode
-
 def handle_message(update: Update, context: CallbackContext):
-    user_id = update.message.from_user.id
     text = update.message.text.lower()
-
-    # Check if user sends passcode
-    if text == PASSCODE:
-        authorized_users.add(user_id)
-        update.message.reply_text("✅ Passcode accepted! You can now see instructions.")
-        return
-
-    # Only authorized users can get instructions
-    if user_id not in authorized_users:
-        update.message.reply_text("❌ You are not authorized. Send the passcode to get access.")
-        return
 
     # Check for keywords and send the proper link
     for keyword, link in LINKS.items():

@@ -1,11 +1,12 @@
 # main.py
-from telegram import Update, ParseMode
+from telegram import Update
+from telegram.constants import ParseMode   # Updated for newer versions
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 # =========================
 # CONFIG VARIABLES
 # =========================
-TOKEN = "8256075938:AAGelvhEM-0DnLCiGeJld49jc_8NWD3bTDU"       # Replace with your BotFather token
+TOKEN = "8256075938:AAGelvhEM-0DnLCiGeJld49jc_8NWD3bTDU"      # Replace with your BotFather token
 HELP_LINK = "https://help.coinbase.com/en/wallet"  # Replace with your help link
 
 # =========================

@@ -3,15 +3,19 @@ from telegram import Update, ParseMode
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 # =========================
-# CONFIG
+# CONFIG VARIABLES
 # =========================
-TOKEN = "8256075938:AAGelvhEM-0DnLCiGeJld49jc_8NWD3bTDU"  # Replace with your Telegram bot token
+TOKEN = "8256075938:AAGelvhEM-0DnLCiGeJld49jc_8NWD3bTDU"       # Replace with your BotFather token
 HELP_LINK = "https://help.coinbase.com/en/wallet"  # Replace with your help link
 
 # =========================
 # START COMMAND
 # =========================
 def start(update: Update, context: CallbackContext):
+    """
+    Sends a welcome message when the user sends /start
+    Internal variables used: update, context
+    """
     update.message.reply_text(
         "Hello! I am CryptoHelperBot 🤖\n\n"
         "I help you troubleshoot your crypto wallet issues.\n"
@@ -25,6 +29,10 @@ def start(update: Update, context: CallbackContext):
 # HELP COMMAND
 # =========================
 def help_command(update: Update, context: CallbackContext):
+    """
+    Sends instructions and disclaimer when the user sends /help
+    Internal variables used: update, context
+    """
     update.message.reply_text(
         "CryptoHelperBot Help ⚙️\n\n"
         "Send a message mentioning your crypto wallet issue (wallet, USDT, transfer failed).\n"
@@ -37,8 +45,13 @@ def help_command(update: Update, context: CallbackContext):
 # HANDLE MESSAGES
 # =========================
 def handle_message(update: Update, context: CallbackContext):
-    text = update.message.text.lower()
+    """
+    Checks the user message for keywords and replies with help link
+    Internal variables used: update, context, text
+    """
+    text = update.message.text.lower()  # INTERNAL VARIABLE
 
+    # Check for wallet-related keywords
     if "wallet" in text or "crypto" in text or "usdt" in text or "transfer failed" in text:
         update.message.reply_text(
             f"I see you have a crypto wallet issue. 🛠️\n\n"
@@ -46,6 +59,7 @@ def handle_message(update: Update, context: CallbackContext):
             parse_mode=ParseMode.MARKDOWN
         )
     else:
+        # Fallback for unrelated messages
         update.message.reply_text(
             "Sorry, I only handle crypto wallet issues. ❌\n"
             "Try using words like 'wallet', 'USDT', or 'transfer failed'."
@@ -55,16 +69,24 @@ def handle_message(update: Update, context: CallbackContext):
 # RUN THE BOT
 # =========================
 def main():
-    updater = Updater(TOKEN)
-    dp = updater.dispatcher
+    """
+    Initializes and runs the bot
+    Internal variables used: updater, dp
+    """
+    updater = Updater(TOKEN)       # INTERNAL VARIABLE
+    dp = updater.dispatcher         # INTERNAL VARIABLE
 
+    # Register command handlers
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help_command))
+
+    # Register message handler
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
 
     print("Bot is running...")
     updater.start_polling()
     updater.idle()
 
+# Entry point
 if __name__ == "__main__":
     main()

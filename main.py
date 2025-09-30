@@ -1,5 +1,5 @@
 # main.py
-from telegram import Update
+pip install python-telegram-bot==13.15
 from telegram.constants import ParseMode   # Updated for newer versions
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 

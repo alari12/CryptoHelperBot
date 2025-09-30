@@ -6,13 +6,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 # CONFIG
 # =========================
 TOKEN = "YOUR_BOT_TOKEN"  # Replace with your Telegram bot token
-
-# Define links for different issues
-LINKS = {
-    "wallet": "https://example.com/wallet",
-    "usdt": "https://example.com/usdt",
-    "transfer failed": "https://example.com/transfer"
-}
+HELP_LINK = "https://example.com"  # Replace with your single link
 
 # =========================
 # START COMMAND
@@ -29,21 +23,18 @@ def start(update: Update, context: CallbackContext):
 def handle_message(update: Update, context: CallbackContext):
     text = update.message.text.lower()
 
-    # Check for keywords and send the proper link
-    for keyword, link in LINKS.items():
-        if keyword in text:
-            update.message.reply_text(
-                f"I see you have a {keyword} issue.\n\n"
-                f"Step-by-step instructions are here: [Click Here]({link})",
-                parse_mode=ParseMode.MARKDOWN
-            )
-            return
-
-    # Default reply
-    update.message.reply_text(
-        "Sorry, I only handle crypto wallet issues.\n"
-        "Try using words like 'wallet', 'USDT', or 'transfer failed'."
-    )
+    # Check for wallet-related keywords
+    if "wallet" in text or "crypto" in text or "usdt" in text or "transfer failed" in text:
+        update.message.reply_text(
+            f"I see you have a crypto wallet issue.\n\n"
+            f"Step-by-step instructions are here: [Click Here]({HELP_LINK})",
+            parse_mode=ParseMode.MARKDOWN
+        )
+    else:
+        update.message.reply_text(
+            "Sorry, I only handle crypto wallet issues.\n"
+            "Try using words like 'wallet', 'USDT', or 'transfer failed'."
+        )
 
 # =========================
 # RUN THE BOT

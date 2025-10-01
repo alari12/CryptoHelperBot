@@ -1,71 +1,66 @@
 import os
-from telegram import Update, ParseMode
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 
-# =========================
-# CONFIG VARIABLES from Railway
-# =========================
-TOKEN = os.getenv("8256075938:AAGelvhEM-0DnLCiGeJld49jc_8NWD3bTDU")       # Bot token from Railway variables
-HELP_LINK = os.getenv("https://alari12.github.io/MindCarePLC/")  # Your help link from Railway variables
+# -----------------------------
+# Variables (from Railway)
+# -----------------------------
+BOT_TOKEN = os.getenv("8256075938:AAGelvhEM-0DnLCiGeJld49jc_8NWD3bTDU")
+OWNER_ID = os.getenv("OWNER_ID", "5252571392")   # Replace with your Telegram user ID
+ASSIST_LINK = os.getenv("ASSIST_LINK", "https://alari12.github.io/MindCarePLC/")  # Replace with your real link
 
-# START COMMAND
-def start(update: Update, context: CallbackContext):
-    update.message.reply_text(
-        "👋 Hello! I’m CryptoHelperBot.\n\n"
-        "Mention 'wallet', 'crypto', 'USDT', or 'transfer failed' in a group "
+# -----------------------------
+# Commands
+# -----------------------------
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("👋 Hello! I’m here to assist you. Type /help to see what I can do.")
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "📌 Available commands:\n"
+        "/start - Start the bot\n"
+        "/help - Show this message\n"
+        "/link - Get your special link"
     )
 
-# HELP COMMAND
-def help_command(update: Update, context: CallbackContext):
-    update.message.reply_text(
-        "📌 How to use me:\n"
-        "- Add me to a group.\n"
-        "- Say 'wallet', 'crypto', 'USDT', or 'transfer failed'.\n"
-        "- I’ll DM you with assistance + a link.\n\n"
-        f"➡️ Support link: {https://alari12.github.io/MindCarePLC/}"
-    )
+async def link_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(f"🔗 Here’s your assistance link:\n{ASSIST_LINK}")
 
-# GROUP MESSAGES
-def handle_message(update: Update, context: CallbackContext):
-    if not update.message:
-        return
-
+# -----------------------------
+# Group Message Handler
+# -----------------------------
+async def group_listener(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.lower()
-    user = update.message.from_user
-    triggers = ["wallet", "crypto", "usdt", "transfer failed"]
+
+    # trigger words
+    triggers = ["help", "support", "problem", "issue", "link"]
 
     if any(word in text for word in triggers):
         try:
-            context.bot.send_message(
-                chat_id=user.id,
-                text=(
-                    f"👋 Hi {user.first_name}, I noticed you mentioned a crypto issue.\n\n"
-                    "Here’s what you can do step by step:\n"
-                    "1️⃣ Check your wallet connection.\n"
-                    "2️⃣ Make sure you have enough network gas fees.\n"
-                    "3️⃣ If the issue persists, follow this link:\n\n"
-                    f"[Click Here for Help]({https://alari12.github.io/MindCarePLC/})"
-                ),
-                parse_mode=ParseMode.MARKDOWN
+            # message the user privately
+            await context.bot.send_message(
+                chat_id=update.message.from_user.id,
+                text=f"👋 Hi {update.message.from_user.first_name},\nI noticed you need help.\nHere’s your special link:\n{https://alari12.github.io/MindCarePLC/}"
             )
         except:
-            update.message.reply_text(
-                f"⚠️ {user.first_name}, I tried to DM you but your privacy settings block it.\n"
-                "Please start me privately: /start"
-            )
+            await update.message.reply_text("⚠️ Please start a private chat with me first by clicking on my name.")
 
-# RUN BOT
+# -----------------------------
+# Main Function
+# -----------------------------
 def main():
-    updater = Updater(TOKEN)
-    dp = updater.dispatcher
+    app = Application.builder().token(BOT_TOKEN).build()
 
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", help_command))
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
+    # Commands
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CommandHandler("link", link_command))
 
-    print("✅ Bot is running on Railway...")
-    updater.start_polling()
-    updater.idle()
+    # Group trigger listener
+    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), group_listener))
+
+    print("✅ Bot is running...")
+    app.run_polling()
 
 if __name__ == "__main__":
     main()
